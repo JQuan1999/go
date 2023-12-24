@@ -1,0 +1,2 @@
+[GIN-debug] POST   /admin/food               --> main.AddFood (4 handlers)
+[GIN-debug] DELETE /admin/food               --> main.DeletFood (4 handlers)

@@ -1,30 +1,19 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/go-redis/redis"
+	"github.com/redis/go-redis/v9"
 )
 
-var redisDb *redis.Client
-
-func initClient() (err error) {
-	redisDb = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
+func main() {
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     "10.177.54.121:6379",
+		Password: "123456",
 		DB:       0,
 	})
-	_, err = redisDb.Ping().Result()
-	if err != nil {
-		return err
-	}
-	return nil
-}
+	val, err := rdb.Get(context.Background(), "key").Result()
+	fmt.Println(val)
 
-func main() {
-	err := initClient()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("连接成功")
 }
