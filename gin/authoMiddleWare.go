@@ -72,6 +72,8 @@ func TestAuthMiddlerWare() {
 func AddFood(ctx *gin.Context) {
 	var food Food
 	if err := ctx.ShouldBindJSON(&food); err != nil {
+		// AbortWithStatusJSON用于返回一个JSON格式的响应，并设置HTTP响应的状态码
+		// AbortWithStatusJSON方法会立即终止请求，并返回一个响应
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"msg": err.Error()})
 		return
 	}

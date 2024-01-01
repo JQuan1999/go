@@ -68,7 +68,7 @@ func main() {
 
 ### 获取query参数
 
-````
+````go
 func main() {
 	router := gin.Default()
 	
@@ -103,14 +103,14 @@ func main() {
 
 ### Query+Post Form
 
-````
+````go
 POST /post?id=1234&page=1 HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 name=manu&message=this_is_great
 ````
 
-````
+````go
 func main() {
   router := gin.Default()
 
@@ -130,7 +130,7 @@ func main() {
 
 ### 上传文件
 
-````
+````go
 func main() {
 	router := gin.Default()
 	// set lower memory
@@ -158,7 +158,7 @@ curl -X POST http://localhost:8080/upload \
 
 ### 上传多个文件
 
-````
+````go
 func main() {
 	router := gin.Default()
 	router.MaxMultipartMemory = 8 << 20
@@ -184,7 +184,7 @@ curl -X POST http://localhost:8080/upload \
 
 ### 路由组
 
-```
+```go
 func main() {
 	router := gin.Default()
 	// simple group v1
@@ -207,14 +207,14 @@ func main() {
 
 ### 空白gin默认不使用中间件
 
-```
+```go
 r := gin.New()
 r := gin.Default() // 使用了默认附带的logger和recovery中间件
 ```
 
 ### 使用中间件
 
-```
+```go
 func main() {
 	// Creates a router without any middleware by default
   	r := gin.New()
@@ -254,7 +254,7 @@ func main() {
 
 ### 自定义恢复函数
 
-```
+```go
 func main() {
 	// Creates a router without any middleware by default
   	r := gin.New()
@@ -284,7 +284,7 @@ func main() {
 
 ### 自定义log文件
 
-```
+```go
 func main() {
   // Disable Console Color, you don't need console color when writing the logs to file.
   gin.DisableConsoleColor()
@@ -780,7 +780,7 @@ func main() {
 
 ###  定制一个认证中间件
 
-````
+````go
 package main
 
 import (

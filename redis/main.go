@@ -1,19 +1,11 @@
 package main
 
-import (
-	"context"
-	"fmt"
+import "redis/history"
 
-	"github.com/redis/go-redis/v9"
-)
+type Task struct {
+	Address string `json:"address"`
+}
 
 func main() {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "10.177.54.121:6379",
-		Password: "123456",
-		DB:       0,
-	})
-	val, err := rdb.Get(context.Background(), "key").Result()
-	fmt.Println(val)
-
+	history.TestPipelineGet()
 }
