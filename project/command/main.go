@@ -40,10 +40,9 @@ func main() {
 		return
 	}
 	db.SetConnMaxLifetime(60 * time.Second)
-	TestSlowSql(db)
+	// TestSlowSql(db)
 	// TestTransaction(db)
-	// TestConcurrency(db)
-	// TestSqlError(db)
+	TestSqlError(db)
 }
 
 func TestSlowSql(db *sql.DB) {
@@ -105,6 +104,8 @@ func TestConcurrency(db *sql.DB) {
 	wg.Wait()
 }
 
+// show sql errors;
+// show critical logs;
 func TestSqlError(db *sql.DB) {
 	_, err := db.Query("update 1 from test.id")
 	if err != nil {

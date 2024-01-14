@@ -9,34 +9,15 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var rdb *redis.Client
-var address string
-var auth string
-var ctx context.Context
-
 type FullResult struct {
 	Digest  string
 	SQLStat map[string]string
 }
 
-func init() {
-	address = "rediscache2.cdb.17usoft.com:3630"
-	auth = "tcbase.dbmiddleware.dbproxy.scanner:qa:inst_data@TCBase.Cache.v3:b140320d"
-	ctx = context.Background()
-	rdb = redis.NewClient(&redis.Options{
-		Addr:     address,
-		Password: auth,
-	})
-	if result := rdb.Ping(ctx); result.Err() != nil {
-		panic(result.Err())
-	}
-}
-
-func GetProxyAddress() {
-
-}
-
 func TestPipelineGet() {
+	InitRedis()
+	rdb := GetRedisClient()
+	ctx := context.Background()
 	if err := rdb.Ping(ctx).Err(); err != nil {
 		panic(err)
 	} else {
@@ -70,11 +51,11 @@ func TestPipelineGet() {
 	}
 
 	// 遍历pipeline的结果
-	// 统计byte数量
-	compressByteCount := 0
-	normalByteCount := 0
-	proxyCount := 0
 
+	compressByteCount := 0 // 压缩后的byte数量
+	normalByteCount := 0   // 未压缩的byte数量
+	proxyCount := 0        // 有流量的代理数量
+	rowCount := 0          // sql stats总行数
 	for idx, cmdRes := range res {
 
 		cmd, ok := cmdRes.(*redis.StringCmd) // 转换为StringCmd
@@ -82,21 +63,24 @@ func TestPipelineGet() {
 			continue
 		}
 		historyData, err := cmd.Result()
-		compressByteCount += len([]byte(historyData))
 
 		switch {
 		case err == redis.Nil:
-			fmt.Printf("proxy: %s don't have history result\n", proxyAddress[idx])
+			// fmt.Printf("proxy: %s don't have history result\n", proxyAddress[idx])
 		case err != nil:
-			fmt.Printf("get proxy: %s history from redis fail, err: %v\n", proxyAddress[idx], err)
+			// fmt.Printf("get proxy: %s history from redis fail, err: %v\n", proxyAddress[idx], err)
 		default:
-			proxyCount++
+			cmpCount := len([]byte(historyData)) // 压缩占用的byte数
+			compressByteCount += cmpCount
+
+			proxyCount++ // 有效proxy节点数量+1
+
 			data, err := DecodeByGzip(historyData) // 解压历史数据
 			if err != nil {
 				fmt.Println("decode failed, err: ", err)
 				continue
 			}
-			count := len([]byte(data)) // 占用的byte数
+			count := len([]byte(data)) // 解压占用的byte数
 			normalByteCount += count
 
 			var res []FullResult
@@ -104,8 +88,10 @@ func TestPipelineGet() {
 				fmt.Printf("unmarsal failed, err: %v\n", err)
 				continue
 			}
+			rowCount += len(res)
 
-			fmt.Printf("proxy: %s cost memory: %dkb, digest code count: %d\n", proxyAddress[idx], int64(count/1024), len(res))
+			fmt.Printf("proxy: %s compress cost memory: %dkb, uncompress cost memory: %dkb, digest code num: %d\n",
+				proxyAddress[idx], int64(cmpCount/1024), int64(count/1024), len(res))
 
 			// for idx := range res {
 			// 	fmt.Println("degest code = ", res[idx].Digest) // 打印指纹
@@ -115,9 +101,6 @@ func TestPipelineGet() {
 			// }
 		}
 	}
-	fmt.Printf("in fact proxy count= %d, history data compress cost mem= %d KB, normal mem= %d KB\n", proxyCount, int64(compressByteCount/1024), int64(normalByteCount/1024))
-}
-
-func TestPipelineWrite() {
-
+	fmt.Printf("proxy count= %d, sql stats count= %d, history data compress cost mem= %d KB, normal mem= %d KB\n",
+		proxyCount, rowCount, int64(compressByteCount/1024), int64(normalByteCount/1024))
 }

@@ -1,2 +1,4 @@
-[GIN-debug] POST   /admin/food               --> main.AddFood (4 handlers)
-[GIN-debug] DELETE /admin/food               --> main.DeletFood (4 handlers)
+[GIN-debug] POST   /account                  --> gin/session/api.CreateAccount (3 handlers)
+[GIN-debug] DELETE /accont                   --> gin/session/api.DeleteAccount (3 handlers)
+[GIN-debug] GET    /login                    --> gin/session/api.Login (3 handlers)
+[GIN-debug] GET    /test/hello               --> gin/session/api.HelloWorld (4 handlers)

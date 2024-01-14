@@ -1,6 +1,7 @@
 package history
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
@@ -59,7 +60,7 @@ func (s *DBStore) GetProxyInst() ([]string, error) {
 	if db == nil {
 		return nil, errors.New("db is nil")
 	}
-	rows, err := db.QueryContext(ctx, `select address from ProxyInstance where isDeleted = 0`)
+	rows, err := db.QueryContext(context.Background(), `select address from ProxyInstance where isDeleted = 0`)
 	if err != nil {
 		return nil, err
 	}

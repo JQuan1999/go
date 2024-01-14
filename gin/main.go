@@ -1,5 +1,9 @@
 package main
 
+import (
+	"gin/cookie"
+)
+
 func main() {
-	TestDoRequest()
+	cookie.TestCookie()
 }

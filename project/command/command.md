@@ -9,9 +9,9 @@
 * reset slowsql stats
 
 ```
-mysql -u test -h 10.177.54.121 -P 3388 -p123456
+mysql -u test -h 10.177.54.121 -P 3311 -p123456
 
-mysql -u admin -h 10.177.54.121 -P 13388 -paNekZX9CWyve@RzQkY
+mysql -u admin -h 10.177.54.121 -P 13311 -paNekZX9CWyve@RzQkY
 
 select sleep(1000) from test;
 
